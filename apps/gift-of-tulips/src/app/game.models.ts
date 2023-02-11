@@ -1,8 +1,8 @@
 export enum Colors {
-  Blue,
-  Red,
-  Pink,
-  Orange,
+  Pink = 'pink',
+  Blue = 'blue',
+  Orange = 'orange',
+  Violet = 'violet',
 }
 
 export enum Values {

@@ -4,7 +4,7 @@ export const emptyBouquets = {
   [Colors.Blue]: [],
   [Colors.Orange]: [],
   [Colors.Pink]: [],
-  [Colors.Red]: [],
+  [Colors.Violet]: [],
 };
 
 // Festivals organized as objects.
