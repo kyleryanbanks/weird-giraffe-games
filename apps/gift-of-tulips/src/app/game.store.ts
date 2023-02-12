@@ -356,16 +356,26 @@ export class GameStore extends ComponentStore<State> {
   );
 
   readonly startNextPlayersTurn = this.updater((state) => {
+    if (!state.numberOfPlayers) {
+      return {
+        ...state,
+        error: 'No game started. Provide number of players',
+      };
+    }
+
     if (!state.turn) {
       return {
         ...state,
-        error: '',
+        error: 'Decide first player to start first turn',
       };
     }
 
     return {
       ...state,
       history: [...state.history, state.turn],
+      turn: {
+        player: (state.turn.player + 1) % state.numberOfPlayers,
+      },
     };
   });
 
