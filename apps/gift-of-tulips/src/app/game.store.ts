@@ -106,6 +106,13 @@ export class GameStore extends ComponentStore<State> {
       };
     }
 
+    if (state.festival !== emptyBouquets) {
+      return {
+        ...state,
+        error: 'Festival already has tulips added',
+      };
+    }
+
     let deck = [...state.deck];
 
     const firstTulip = deck.shift() as Tulip;
