@@ -38,6 +38,62 @@ export class GameStore extends ComponentStore<State> {
     super(initialState);
   }
 
+  readonly activeTurn$ = this.select((state) => state.turn);
+
+  readonly playerKeys$ = this.select((state) =>
+    Object.keys(state.players).map((key) => Number(key))
+  );
+
+  readonly hasNotStarted$ = this.select((state) => state.numberOfPlayers === 0);
+
+  readonly hasStarted$ = this.select((state) =>
+    state.numberOfPlayers ? state : false
+  );
+
+  readonly readyToSeed$ = this.select(
+    (state) => state.numberOfPlayers && state.festival === emptyBouquets
+  );
+
+  readonly readyToSelectFirstPlayer$ = this.select(
+    (state) => state.festival !== emptyBouquets && !state.turn
+  );
+
+  readonly playerTakingTurn$ = this.select((state) => state.turn?.player);
+
+  readonly waitingForFirstTulip$ = this.select(
+    (state) => !state.turn?.firstTulip
+  );
+
+  readonly waitingForFirstAction$ = this.select((state) =>
+    state.turn?.firstTulip && !state.turn?.firstAction
+      ? state.turn.firstTulip
+      : false
+  );
+
+  readonly waitingForSecondTulip$ = this.select(
+    (state) => state.turn?.firstAction && !state.turn?.secondTulip
+  );
+
+  readonly waitingForSecondAction$ = this.select((state) =>
+    state.turn?.secondTulip && !state.turn?.secondAction
+      ? state.turn.secondTulip
+      : false
+  );
+
+  readonly waitingForNextTurn$ = this.select(
+    (state) =>
+      state.deck.length !== 0 &&
+      state.turn?.player &&
+      state.turn.firstTulip &&
+      state.turn.firstAction &&
+      state.turn.secondTulip &&
+      state.turn.secondAction
+  );
+
+  readonly isOver$ = this.select(
+    (state) => state.festival !== emptyBouquets && state.deck.length === 0
+  );
+
   readonly initializeGameForNumberOfPlayers = this.updater(
     (state, numberOfPlayers: number) => {
       const generatePlayers = (numberOfPlayers: number): Players =>
@@ -376,10 +432,16 @@ export class GameStore extends ComponentStore<State> {
       ...state,
       history: [...state.history, state.turn],
       turn: {
-        player: (state.turn.player + 1) % state.numberOfPlayers,
+        player:
+          state.turn.player % state.numberOfPlayers === 0
+            ? 1
+            : state.turn.player + 1,
       },
     };
   });
+
+  readonly matchesFirstAction$ = (action: Action) =>
+    this.select((state) => state.turn?.firstAction === action);
 
   shuffleDeckWithFisherYatesAlgorithm = (deck: Tulip[]): Tulip[] => {
     const shuffledDeck = [...deck];
