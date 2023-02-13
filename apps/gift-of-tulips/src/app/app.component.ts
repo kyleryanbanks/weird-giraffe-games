@@ -1,10 +1,10 @@
 import { Component } from '@angular/core';
+import { GameStore } from './game.store';
 
 @Component({
-  selector: 'weird-giraffe-games-root',
+  selector: 'got-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  providers: [GameStore],
 })
-export class AppComponent {
-  title = 'gift-of-tulips';
-}
+export class AppComponent {}
