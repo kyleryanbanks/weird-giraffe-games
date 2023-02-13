@@ -42,10 +42,10 @@ export interface Festival {
 }
 
 export enum Action {
-  Festival,
-  Secret,
-  Give,
-  Keep,
+  Festival = 'Festival',
+  Secret = 'Secret',
+  Give = 'Give',
+  Keep = 'Keep',
 }
 
 export interface Turn {
