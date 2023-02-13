@@ -15,7 +15,7 @@ import { SeederComponent } from './seeder.component';
         align-items: center;
       }
 
-      section {
+      .flex-col {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -40,7 +40,7 @@ import { SeederComponent } from './seeder.component';
     `,
   ],
   template: `
-    <section *ngIf="game.hasNotStarted$ | async">
+    <section class="flex-col" *ngIf="game.hasNotStarted$ | async">
       <h1>Gift of Tulips</h1>
       <h2>Select number of players</h2>
       <div class="flex-row">
@@ -67,85 +67,96 @@ import { SeederComponent } from './seeder.component';
       </div>
     </ng-container>
 
-    <ng-container *ngIf="game.playerTakingTurn$ | async as activePlayer">
-      <code>Current Turn: {{ game.activeTurn$ | async | json }}</code>
+    <section
+      class="flex-row"
+      *ngIf="game.playerTakingTurn$ | async as activePlayer"
+    >
+      <pre>Current Turn: {{ game.activeTurn$ | async | json }}</pre>
 
-      <ng-container *ngIf="game.waitingForFirstTulip$ | async">
-        <button (click)="game.drawFirstTulip()">Draw your first tulip</button>
-      </ng-container>
+      <div class="flex-col">
+        <ng-container *ngIf="game.waitingForFirstTulip$ | async">
+          <button (click)="game.drawFirstTulip()">Draw your first tulip</button>
+        </ng-container>
 
-      <ng-container *ngIf="game.waitingForFirstAction$ | async as firstTulip">
-        <h1>{{ firstTulip | json }}</h1>
-        <button (click)="game.takeFirstAction({ firstAction: Action.Keep })">
-          Keep
-        </button>
+        <ng-container *ngIf="game.waitingForFirstAction$ | async as firstTulip">
+          <h1>{{ firstTulip | json }}</h1>
+          <button (click)="game.takeFirstAction({ firstAction: Action.Keep })">
+            Keep
+          </button>
 
-        <div class="flex-row">
-          <ng-container *ngFor="let player of game.playerKeys$ | async">
-            <button
-              *ngIf="player !== activePlayer"
-              (click)="
-                game.takeFirstAction({ firstAction: Action.Give, player })
-              "
-            >
-              Give to {{ player }}
-            </button>
-          </ng-container>
-        </div>
+          <div class="flex-row">
+            <ng-container *ngFor="let player of game.playerKeys$ | async">
+              <button
+                *ngIf="player !== activePlayer"
+                (click)="
+                  game.takeFirstAction({ firstAction: Action.Give, player })
+                "
+              >
+                Give to {{ player }}
+              </button>
+            </ng-container>
+          </div>
 
-        <button
-          (click)="game.takeFirstAction({ firstAction: Action.Festival })"
+          <button
+            (click)="game.takeFirstAction({ firstAction: Action.Festival })"
+          >
+            Add To Festival
+          </button>
+          <button
+            (click)="game.takeFirstAction({ firstAction: Action.Secret })"
+          >
+            Add To Secret Festival
+          </button>
+        </ng-container>
+
+        <ng-container *ngIf="game.waitingForSecondTulip$ | async">
+          <button (click)="game.drawSecondTulip()">
+            Draw your second tulip
+          </button>
+        </ng-container>
+
+        <ng-container
+          *ngIf="game.waitingForSecondAction$ | async as secondTulip"
         >
-          Add To Festival
-        </button>
-        <button (click)="game.takeFirstAction({ firstAction: Action.Secret })">
-          Add To Secret Festival
-        </button>
-      </ng-container>
+          <h1>{{ secondTulip | json }}</h1>
+          <button
+            [disabled]="game.matchesFirstAction$(Action.Keep) | async"
+            (click)="game.takeSecondAction({ secondAction: Action.Keep })"
+          >
+            Keep
+          </button>
+          <div class="flex-row">
+            <ng-container *ngFor="let player of game.playerKeys$ | async">
+              <button
+                *ngIf="player !== activePlayer"
+                [disabled]="game.matchesFirstAction$(Action.Give) | async"
+                (click)="
+                  game.takeSecondAction({ secondAction: Action.Give, player })
+                "
+              >
+                Give to {{ player }}
+              </button>
+            </ng-container>
+          </div>
+          <button
+            [disabled]="game.matchesFirstAction$(Action.Festival) | async"
+            (click)="game.takeSecondAction({ secondAction: Action.Festival })"
+          >
+            Add To Festival
+          </button>
+          <button
+            [disabled]="game.matchesFirstAction$(Action.Secret) | async"
+            (click)="game.takeSecondAction({ secondAction: Action.Secret })"
+          >
+            Add To Secret Festival
+          </button>
+        </ng-container>
 
-      <ng-container *ngIf="game.waitingForSecondTulip$ | async">
-        <button (click)="game.drawSecondTulip()">Draw your second tulip</button>
-      </ng-container>
-
-      <ng-container *ngIf="game.waitingForSecondAction$ | async as secondTulip">
-        <h1>{{ secondTulip | json }}</h1>
-        <button
-          [disabled]="game.matchesFirstAction$(Action.Keep) | async"
-          (click)="game.takeSecondAction({ secondAction: Action.Keep })"
-        >
-          Keep
-        </button>
-        <div class="flex-row">
-          <ng-container *ngFor="let player of game.playerKeys$ | async">
-            <button
-              *ngIf="player !== activePlayer"
-              [disabled]="game.matchesFirstAction$(Action.Give) | async"
-              (click)="
-                game.takeSecondAction({ secondAction: Action.Give, player })
-              "
-            >
-              Give to {{ player }}
-            </button>
-          </ng-container>
-        </div>
-        <button
-          [disabled]="game.matchesFirstAction$(Action.Festival) | async"
-          (click)="game.takeSecondAction({ secondAction: Action.Festival })"
-        >
-          Add To Festival
-        </button>
-        <button
-          [disabled]="game.matchesFirstAction$(Action.Secret) | async"
-          (click)="game.takeSecondAction({ secondAction: Action.Secret })"
-        >
-          Add To Secret Festival
-        </button>
-      </ng-container>
-
-      <ng-container *ngIf="game.waitingForNextTurn$ | async">
-        <button (click)="game.startNextPlayersTurn()">Start Next Turn</button>
-      </ng-container>
-    </ng-container>
+        <ng-container *ngIf="game.waitingForNextTurn$ | async">
+          <button (click)="game.startNextPlayersTurn()">Start Next Turn</button>
+        </ng-container>
+      </div>
+    </section>
 
     <ng-container *ngIf="game.isOver$ | async">
       <h1>GGs</h1>
