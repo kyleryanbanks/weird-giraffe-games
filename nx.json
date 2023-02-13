@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "npmScope": "weird-giraffe-games",
+  "defaultProject": "gift-of-tulips",
   "tasksRunnerOptions": {
     "default": {
       "runner": "@nrwl/nx-cloud",
