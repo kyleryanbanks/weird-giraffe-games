@@ -38,6 +38,8 @@ export class GameStore extends ComponentStore<State> {
     super(initialState);
   }
 
+  readonly gameState$ = this.select((state) => state);
+
   readonly activeTurn$ = this.select((state) => state.turn);
 
   readonly playerKeys$ = this.select((state) =>
@@ -45,10 +47,6 @@ export class GameStore extends ComponentStore<State> {
   );
 
   readonly hasNotStarted$ = this.select((state) => state.numberOfPlayers === 0);
-
-  readonly hasStarted$ = this.select((state) =>
-    state.numberOfPlayers ? state : false
-  );
 
   readonly readyToSeed$ = this.select(
     (state) => state.numberOfPlayers && state.festival === emptyBouquets

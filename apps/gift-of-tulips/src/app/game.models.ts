@@ -14,7 +14,7 @@ export enum Values {
 export interface Tulip {
   color: Colors;
   value: Values;
-  extra: boolean; // is this one of the 5/6 player tulips
+  extra?: boolean; // is this one of the 5/6 player tulips
 }
 
 export type Bouquets = Record<Colors, Tulip[]>;
