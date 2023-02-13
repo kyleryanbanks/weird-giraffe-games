@@ -160,7 +160,10 @@ export class GameStore extends ComponentStore<State> {
   });
 
   readonly takeFirstAction = this.updater(
-    (state, firstAction: Action, target?: number) => {
+    (
+      state,
+      { firstAction, player }: { firstAction: Action; player?: number }
+    ) => {
       if (!state.turn?.firstTulip) {
         return {
           ...state,
@@ -170,7 +173,7 @@ export class GameStore extends ComponentStore<State> {
 
       switch (firstAction) {
         case Action.Give: {
-          return target
+          return player
             ? {
                 ...state,
                 turn: {
@@ -179,10 +182,10 @@ export class GameStore extends ComponentStore<State> {
                 },
                 players: {
                   ...state.players,
-                  [target]: {
-                    ...state.players[target],
+                  [player]: {
+                    ...state.players[player],
                     bouquets: this.addTulipToBouquets(
-                      state.players[target].bouquets,
+                      state.players[player].bouquets,
                       state.turn.firstTulip
                     ),
                   },
@@ -190,7 +193,7 @@ export class GameStore extends ComponentStore<State> {
               }
             : {
                 ...state,
-                error: 'Give action but no target provided',
+                error: 'Give action but no player provided',
               };
         }
 
@@ -266,7 +269,10 @@ export class GameStore extends ComponentStore<State> {
   });
 
   readonly takeSecondAction = this.updater(
-    (state, secondAction: Action, target?: number) => {
+    (
+      state,
+      { secondAction, player }: { secondAction: Action; player?: number }
+    ) => {
       if (!state.turn?.secondTulip) {
         return {
           ...state,
@@ -283,7 +289,7 @@ export class GameStore extends ComponentStore<State> {
 
       switch (secondAction) {
         case Action.Give: {
-          return target
+          return player
             ? {
                 ...state,
                 turn: {
@@ -292,10 +298,10 @@ export class GameStore extends ComponentStore<State> {
                 },
                 players: {
                   ...state.players,
-                  [target]: {
-                    ...state.players[target],
+                  [player]: {
+                    ...state.players[player],
                     bouquets: this.addTulipToBouquets(
-                      state.players[target].bouquets,
+                      state.players[player].bouquets,
                       state.turn.secondTulip
                     ),
                   },
@@ -303,7 +309,7 @@ export class GameStore extends ComponentStore<State> {
               }
             : {
                 ...state,
-                error: 'Give action but no target provided',
+                error: 'Give action but no player provided',
               };
         }
 
