@@ -1,26 +1,15 @@
 import { Injectable } from '@angular/core';
 import { ComponentStore } from '@ngrx/component-store';
-import { Bouquets, Colors, Players, Tulip, Values } from './game.models';
 import { emptyBouquets, initialDiscardsByPlayerCount } from './game.constants';
-
-export enum Action {
-  Festival,
-  Secret,
-  Give,
-  Keep,
-}
-
-export interface Turn {
-  player: number;
-  firstTulip?: Tulip;
-  firstAction?: Action;
-  secondTulip?: Tulip;
-  secondAction?: Action;
-}
-
-export interface Log {
-  turn: Turn;
-}
+import {
+  Action,
+  Bouquets,
+  Colors,
+  Players,
+  Tulip,
+  Turn,
+  Values,
+} from './game.models';
 
 export interface State {
   numberOfPlayers: number;

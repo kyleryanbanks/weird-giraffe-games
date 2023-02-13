@@ -40,3 +40,18 @@ export interface Festival {
   second?: number;
   third?: number;
 }
+
+export enum Action {
+  Festival,
+  Secret,
+  Give,
+  Keep,
+}
+
+export interface Turn {
+  player: number;
+  firstTulip?: Tulip;
+  firstAction?: Action;
+  secondTulip?: Tulip;
+  secondAction?: Action;
+}
