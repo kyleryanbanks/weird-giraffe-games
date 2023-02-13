@@ -153,7 +153,7 @@ import { SeederComponent } from './seeder.component';
 
     <hr />
 
-    <div *ngIf="game.gameState$ | async as state" class="flex-row">
+    <div *ngIf="game.state$ | async as state" class="flex-row">
       <pre>Deck: {{ state.deck | json }}</pre>
       <pre>Players: {{ state.players | json }}</pre>
       <pre>Festival: {{ state.festival | json }}</pre>

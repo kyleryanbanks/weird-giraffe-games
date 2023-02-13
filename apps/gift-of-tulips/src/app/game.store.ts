@@ -38,8 +38,6 @@ export class GameStore extends ComponentStore<State> {
     super(initialState);
   }
 
-  readonly gameState$ = this.select((state) => state);
-
   readonly activeTurn$ = this.select((state) => state.turn);
 
   readonly playerKeys$ = this.select((state) =>
