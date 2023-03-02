@@ -48,6 +48,12 @@ export enum Action {
   Keep = 'Keep',
 }
 
+export interface InitialDraw {
+  player: number;
+  firstTulip?: Tulip;
+  secondTulip?: Tulip;
+}
+
 export interface Turn {
   player: number;
   firstTulip?: Tulip;

@@ -54,6 +54,26 @@ import { SeederComponent } from './seeder.component';
 
     <got-seeder *ngIf="game.readyToSeed$ | async"></got-seeder>
 
+    <ng-container *ngIf="game.initialDraw$ | async as initialDraw">
+      <section *ngIf="game.readyForInitialDraw$ | async">
+        <h2>Player {{ initialDraw.player }}</h2>
+        <button (click)="game.drawInitialTulips()">Make Initial Draws</button>
+      </section>
+
+      <section *ngIf="game.readyForInitialSelection$ | async">
+        <h2>Player {{ initialDraw.player }}</h2>
+        <h3>
+          Choose one tulip to keep and add the other to the secret festival
+        </h3>
+        <button (click)="game.selectInitialTulip(true)">
+          {{ initialDraw.firstTulip | json }}
+        </button>
+        <button (click)="game.selectInitialTulip(true)">
+          {{ initialDraw.secondTulip | json }}
+        </button>
+      </section>
+    </ng-container>
+
     <ng-container *ngIf="game.readyToSelectFirstPlayer$ | async">
       <h1>Which player has gifted someone a flower most recently?</h1>
 
@@ -175,6 +195,7 @@ import { SeederComponent } from './seeder.component';
       <pre>Players: {{ state.players | json }}</pre>
       <pre>Festival: {{ state.festival | json }}</pre>
       <pre>Secret: {{ state.secret | json }}</pre>
+      <pre>Initial Draw: {{ state.initialDraw | json }}</pre>
     </div>
   `,
   imports: [NgIf, NgFor, AsyncPipe, JsonPipe, SeederComponent],

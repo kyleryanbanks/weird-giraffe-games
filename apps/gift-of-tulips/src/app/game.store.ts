@@ -5,6 +5,7 @@ import {
   Action,
   Bouquets,
   Colors,
+  InitialDraw,
   Players,
   Tulip,
   Turn,
@@ -20,6 +21,7 @@ export interface State {
   history: Turn[];
   turn?: Turn;
   error?: string;
+  initialDraw?: InitialDraw;
 }
 
 const initialState: State = {
@@ -29,6 +31,9 @@ const initialState: State = {
   secret: [],
   festival: emptyBouquets,
   history: [],
+  initialDraw: {
+    player: 1,
+  },
   turn: undefined,
 };
 
@@ -37,6 +42,8 @@ export class GameStore extends ComponentStore<State> {
   constructor() {
     super(initialState);
   }
+
+  readonly initialDraw$ = this.select((state) => state.initialDraw);
 
   readonly activeTurn$ = this.select((state) => state.turn);
 
@@ -50,8 +57,20 @@ export class GameStore extends ComponentStore<State> {
     (state) => state.numberOfPlayers && state.festival === emptyBouquets
   );
 
+  readonly readyForInitialDraw$ = this.select(
+    (state) =>
+      state.festival !== emptyBouquets &&
+      !state.initialDraw?.firstTulip &&
+      !state.initialDraw?.secondTulip
+  );
+
+  readonly readyForInitialSelection$ = this.select(
+    (state) => state.initialDraw?.firstTulip && state.initialDraw?.secondTulip
+  );
+
   readonly readyToSelectFirstPlayer$ = this.select(
-    (state) => state.festival !== emptyBouquets && !state.turn
+    (state) =>
+      state.festival !== emptyBouquets && !state.initialDraw && !state.turn
   );
 
   readonly playerTakingTurn$ = this.select((state) => state.turn?.player);
@@ -180,6 +199,89 @@ export class GameStore extends ComponentStore<State> {
       },
     };
   });
+
+  readonly drawInitialTulips = this.updater((state) => {
+    if (!state.initialDraw) {
+      return {
+        ...state,
+        error: 'Initial draw has not started yet. Seed Festival First.',
+      };
+    }
+
+    if (state.initialDraw.player === 0) {
+      return {
+        ...state,
+        error: 'All players have already made their initial draws.',
+      };
+    }
+
+    const deck = [...state.deck];
+    const firstTulip = deck.shift() as Tulip;
+    const secondTulip = deck.shift() as Tulip;
+
+    return {
+      ...state,
+      deck,
+      initialDraw: {
+        ...state.initialDraw,
+        firstTulip,
+        secondTulip,
+      },
+    };
+  });
+
+  readonly selectInitialTulip = this.updater(
+    (state, keepFirstTulip: boolean) => {
+      if (!state.initialDraw) {
+        return {
+          ...state,
+          error: 'Initial draw has not started yet. Seed Festival First.',
+        };
+      }
+
+      if (!state.initialDraw.firstTulip || !state.initialDraw.secondTulip) {
+        return {
+          ...state,
+          error: 'Player has not drawn thier initial tulips yet.',
+        };
+      }
+
+      if (state.initialDraw.player === 0) {
+        return {
+          ...state,
+          error: 'All players have already made their initial draws.',
+        };
+      }
+
+      return {
+        ...state,
+        players: {
+          ...state.players,
+          [state.initialDraw.player]: {
+            ...state.players[state.initialDraw.player],
+            bouquets: this.addTulipToBouquets(
+              state.players[state.initialDraw.player].bouquets,
+              keepFirstTulip
+                ? state.initialDraw.firstTulip
+                : state.initialDraw.secondTulip
+            ),
+          },
+        },
+        secret: [
+          ...state.secret,
+          keepFirstTulip
+            ? state.initialDraw.secondTulip
+            : state.initialDraw.firstTulip,
+        ],
+        initialDraw:
+          state.initialDraw.player < state.numberOfPlayers
+            ? {
+                player: state.initialDraw.player + 1,
+              }
+            : undefined,
+      };
+    }
+  );
 
   readonly decideFirstPlayer = this.updater((state, player: number) => ({
     ...state,
