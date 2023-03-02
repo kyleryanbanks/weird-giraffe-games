@@ -139,13 +139,19 @@ import { SeederComponent } from './seeder.component';
             </ng-container>
           </div>
           <button
-            [disabled]="game.matchesFirstAction$(Action.Festival) | async"
+            [disabled]="
+              (game.matchesFirstAction$(Action.Festival) | async) ||
+              (game.matchesFirstAction$(Action.Secret) | async)
+            "
             (click)="game.takeSecondAction({ secondAction: Action.Festival })"
           >
             Add To Festival
           </button>
           <button
-            [disabled]="game.matchesFirstAction$(Action.Secret) | async"
+            [disabled]="
+              (game.matchesFirstAction$(Action.Festival) | async) ||
+              (game.matchesFirstAction$(Action.Secret) | async)
+            "
             (click)="game.takeSecondAction({ secondAction: Action.Secret })"
           >
             Add To Secret Festival
