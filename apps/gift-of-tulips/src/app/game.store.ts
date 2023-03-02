@@ -109,8 +109,12 @@ export class GameStore extends ComponentStore<State> {
 
         // Fill the deck with tulips
         for (const color of Object.values(Colors)) {
-          for (const value of Object.values(Values)) {
-            deck.push(...Array(2).fill({ color, value }));
+          // TS Number Enums (compared to string enumbs, like Colors) return both string and number values
+          // In this case, we just want the number values for easier math later, so we filter for numbers
+          for (const value of Object.values(Values).filter(
+            (x) => typeof x === 'number'
+          )) {
+            deck.push(...Array(3).fill({ color, value }));
 
             if (numberOfPlayers > 5) {
               // There are extra cards for 5/6 players.
