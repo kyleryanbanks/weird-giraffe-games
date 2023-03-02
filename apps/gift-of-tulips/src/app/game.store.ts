@@ -290,6 +290,10 @@ export class GameStore extends ComponentStore<State> {
         case Action.Secret: {
           return {
             ...state,
+            turn: {
+              ...state.turn,
+              firstAction,
+            },
             secret: [...state.secret, state.turn.firstTulip],
           };
         }
@@ -406,6 +410,10 @@ export class GameStore extends ComponentStore<State> {
         case Action.Secret: {
           return {
             ...state,
+            turn: {
+              ...state.turn,
+              secondAction,
+            },
             secret: [...state.secret, state.turn.secondTulip],
           };
         }
